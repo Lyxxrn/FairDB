@@ -17,7 +17,6 @@ class Product(models.Model):
     image_url = models.URLField()
     category = models.CharField(max_length=100)
     description = models.TextField()
-    ingredients = models.TextField()
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE)
 
     def __str__(self):
