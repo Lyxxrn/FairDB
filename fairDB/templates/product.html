@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <script src="{% static 'js/product.js' %}"></script>
+</head>
+<body>
+<div id="image-wrapper">
+    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+    <div class="overall-rating community-rating">
+        <h3>Communitybewertung:</h3>
+        <div>
+            {% with ''|ljust:gold_stars as stars %}
+                {% for _ in stars %}
+                    <span class="star-gold">★ </span>
+                {% endfor %}
+            {% endwith %}
+            {% with ''|ljust:gray_stars as stars %}
+                {% for _ in stars %}
+                    <span class="star-gray">★ </span>
+                {% endfor %}
+            {% endwith %}
+        </div>
+    </div>
+    <div id="rating-form">
+    <h3>Gib deine Bewertung ab:</h3>
+    <form id="star-rating-form">
+        {% csrf_token %}
+        <div class="rate">
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label for="star5" title="5 Sterne">5 stars</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4" title="4 Sterne">4 stars</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3" title="3 Sterne">3 stars</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2" title="2 Sterne">2 stars</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1" title="1 Stern">1 star</label>
+        </div>
+        <div id="rating-feedback" style="clear: both; padding-top: 10px;"></div>
+    </form>
+</div>
+</div>
+<div id="product-texts">
+    <h1>{{ product.name }}</h1>
+    <h3>Marke: {{ product.manufacturer.name }}</h3>
+    <p>{{ product.description }}</p>
+    <h3>Inhalte:</h3>
+    <ul>
+        {% for ingredient in product.ingredients.all %}
+            <li>{{ ingredient.name }}</li>
+        {% endfor %}
+    </ul>
+    <div class="progress-bar">
+        <div class="sustainability" style="width: {{ product.score.sustainability_score}}%;">Nachhaltigkeit: {{ product.score.sustainability_score}}%</div>
+    </div>
+    <div class="progress-bar">
+        <div class="human-rights" style="width: {{ product.score.human_rights_score }}%;">Menschenrechte: {{ product.score.human_rights_score }}%</div>
+    </div>
+    <div class="progress-bar">
+        <div class="overall" style="width: {{ product.score.overall_score }}%;">Gesamtbewertung: {{ product.score.overall_score }}%</div>
+    </div>
+</div>
+</body>
+</html>
