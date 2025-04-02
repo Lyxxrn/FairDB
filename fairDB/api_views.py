@@ -7,9 +7,10 @@ from rest_framework.views import APIView
 from .models import Product, Manufacturer, Score, Certification, UserReview
 from .serializers import ProductSerializer, ManufacturerSerializer, ScoreSerializer, CertificationSerializer, \
     UserReviewSerializer, RatingSerializer
+from .sql_logger import sql_debug, SQLDebugMixin
 
 
-class ProductView(APIView):
+class ProductView(SQLDebugMixin, APIView):
     def post(self, request):
         # Create or update Manufacturer
         manufacturer_data = request.data.get('manufacturer')
@@ -100,15 +101,18 @@ class ProductView(APIView):
 
         return Response(product_serializer.data, status=status.HTTP_200_OK)
 
-class UserReviewListCreateView(generics.ListCreateAPIView):
+
+class UserReviewListCreateView(SQLDebugMixin, generics.ListCreateAPIView):
     queryset = UserReview.objects.all()
     serializer_class = UserReviewSerializer
 
-class UserReviewDetailView(generics.RetrieveUpdateAPIView):
+
+class UserReviewDetailView(SQLDebugMixin, generics.RetrieveUpdateAPIView):
     queryset = UserReview.objects.all()
     serializer_class = UserReviewSerializer
 
-class ProductDetailView(generics.RetrieveAPIView):
+
+class ProductDetailView(SQLDebugMixin, generics.RetrieveAPIView):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
@@ -117,7 +121,8 @@ class ProductDetailView(generics.RetrieveAPIView):
             return Product.objects.filter(key=key)
         return Product.objects.all()
 
-class ProductSearchView(APIView):
+
+class ProductSearchView(SQLDebugMixin, APIView):
     def get(self, request):
         query = request.GET.get('q', '')
         if query:
@@ -131,6 +136,7 @@ class ProductSearchView(APIView):
 
 
 @api_view(['POST'])
+@sql_debug
 def rate_product(request):
     serializer = RatingSerializer(data=request.data)
     if serializer.is_valid():
